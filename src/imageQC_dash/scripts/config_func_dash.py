@@ -8,6 +8,7 @@ Prepared for either local host or for data saved in minio-buckets
 from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 import os
+import sys
 from pathlib import Path
 import yaml
 
@@ -32,6 +33,28 @@ class DashSettingsDefault:
             '#000000', '#5165d5', '#a914a6', '#7f9955', '#efb412',
             '#97d2d1', '#b3303b'])
     override_css: bool = False
+
+def find_user_prefs_config_folder():
+    config_folder = ''
+    user_prefs_fname = 'user_preferences.yaml'
+    if sys.platform.startswith("win"):
+        appdata = os.path.join(os.environ['APPDATA'], 'imageQC')
+        tempdir = r'C:\Windows\Temp\imageQC'  # alternative to APPDATA if needed
+    else:  # assume Linux for now
+        appdata = os.path.expanduser('~/.config/imageQC')
+        tempdir = r'/etc/opt/imageQC'
+
+    path = os.path.join(appdata, user_prefs_fname)
+    if os.path.exists(path) is False:
+        path = os.path.join(tempdir, user_prefs_fname)  # try with TEMPDIR
+
+    if os.path.exists(path):
+        with open(path, 'r') as file:
+            doc = yaml.safe_load(file)
+            print(f'type {type(doc)} {doc}')
+            config_folder = doc['config_folder']
+
+    return config_folder
 
 
 def verify_input_dict(dict_input, default_object):

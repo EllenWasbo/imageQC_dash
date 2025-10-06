@@ -621,29 +621,35 @@ if __name__ == '__main__':
 
     proceed = True
     minio = False
+    env_config_folder = 'IMAGEQC_CONFIG_FOLDER'
     try:
         # if imageQC is running, use defined config path from environ
-        config_path = os.environ['IMAGEQC_CONFIG_FOLDER']
+        config_path = os.environ[env_config_folder]
     except KeyError:
-        # find values from .env
-        env_path = Path(__file__).parent / '.env'
-        if Path.exists(env_path):
-            from dotenv import load_dotenv
-            load_dotenv(env_path)
-
-            if 'IMAGEQC_CONFIG_FOLDER' in os.environ:
-                print('----iQC')
-            else:
-                if 'IMAGEQC_BUCKET_NAME' in os.environ:
-                    print('----minio')
-                    minio = True
-                else:
-                    print('missing expected keys in .env. See Wiki.')
-                    proceed = False
-
+        # if imageQC user pref file exist
+        config_folder = cffd.find_user_prefs_config_folder()
+        if config_folder:
+            os.environ[env_config_folder] = config_folder
         else:
-            print('missing .env-file. See Wiki.')
-            proceed = False
+            # find values from .env
+            env_path = Path(__file__).parent.parent.parent / '.env'
+            if Path.exists(env_path):
+                from dotenv import load_dotenv
+                load_dotenv(env_path)
+
+                if env_config_folder in os.environ:
+                    print('----iQC')
+                else:
+                    if 'IMAGEQC_BUCKET_NAME' in os.environ:
+                        print('----minio')
+                        minio = True
+                    else:
+                        print('missing expected keys in .env. See Wiki.')
+                        proceed = False
+
+            else:
+                print('missing .env-file. See Wiki.')
+                proceed = False
 
     if proceed:
         run_dash_app(minio)
