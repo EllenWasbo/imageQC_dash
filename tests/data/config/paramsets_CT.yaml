@@ -1,0 +1,357 @@
+label: CONFIGDEFAULT
+output:
+  include_header: false
+  transpose_table: false
+  decimal_mark: ','
+  decimal_all: false
+  include_filename: false
+  group_by: [SeriesInstanceUID]
+  tests:
+    Hom:
+    - label: MAXABS_DIFF_FROM_CENTER_HU
+      alternative: 0
+      columns: [5, 6, 7, 8]
+      calculation: max abs
+      per_group: true
+    Noi:
+    - label: NOISE
+      alternative: 0
+      columns: [1]
+      calculation: '='
+      per_group: false
+    Sli:
+    - label: AVG_SLICETHICK
+      alternative: 0
+      columns: [5]
+      calculation: '='
+      per_group: false
+    MTF:
+    - label: X_MTF50
+      alternative: 0
+      columns: [0]
+      calculation: mean
+      per_group: false
+    CTn:
+    - label: TEFLON
+      alternative: 0
+      columns: [0]
+      calculation: mean
+      per_group: true
+    - label: DELRIN
+      alternative: 0
+      columns: [1]
+      calculation: mean
+      per_group: true
+    - label: ACRYLIC
+      alternative: 0
+      columns: [2]
+      calculation: mean
+      per_group: true
+    - label: POLYSTYRENE
+      alternative: 0
+      columns: [3]
+      calculation: mean
+      per_group: true
+    - label: LDPE
+      alternative: 0
+      columns: [4]
+      calculation: mean
+      per_group: true
+    - label: PMP
+      alternative: 0
+      columns: [5]
+      calculation: mean
+      per_group: true
+    - label: AIR
+      alternative: 0
+      columns: [6]
+      calculation: mean
+      per_group: true
+    HUw:
+    - label: HU_WATER_MAXABS
+      alternative: 0
+      columns: [0]
+      calculation: max abs
+      per_group: true
+    - label: HU_WATER_AVG
+      alternative: 0
+      columns: [0]
+      calculation: mean
+      per_group: true
+    DCM:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+    ROI:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+    Rin:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+dcm_tagpattern:
+  label: default
+  list_tags: [KVP, mAs, CTDIvol, SoftwareVersions]
+  list_format: ['|:.0f|', '|:.1f|', '|:.2f|', '']
+roi_type: 0
+roi_radius: 5.0
+roi_x: 10.0
+roi_y: 10.0
+roi_a: 0.0
+roi_offset_xy: [0.0, 0.0]
+roi_offset_mm: false
+roi_use_table: 0
+roi_table:
+  labels: []
+  pos_x: []
+  pos_y: []
+roi_table_val: 0
+roi_table_val_sup: 1
+num_roi_size_x: 100
+num_roi_size_y: 50
+num_table:
+  labels: ['']
+  pos_x:
+  - [10, 20]
+  pos_y:
+  - [10, 20]
+num_digit_label: ''
+hom_roi_size: 10.0
+hom_roi_distance: 65.0
+hom_roi_rotation: 0.0
+noi_roi_size: 55.0
+huw_roi_size: 55.0
+mtf_type: 0
+mtf_roi_size: 3.0
+mtf_background_width: 1.0
+mtf_plot: 2
+mtf_gaussian: true
+mtf_cy_pr_mm: false
+mtf_cut_lsf: true
+mtf_cut_lsf_w: 3.0
+mtf_cut_lsf_w_fade: 1.0
+mtf_offset_xy: [0.0, 0.0]
+mtf_offset_mm: false
+mtf_auto_center: false
+mtf_sampling_frequency: 0.01
+ttf_roi_size: 11.0
+ttf_gaussian: true
+ttf_cut_lsf: true
+ttf_cut_lsf_w: 3.0
+ttf_cut_lsf_w_fade: 1.0
+ttf_sampling_frequency: 0.01
+ttf_table:
+  labels: []
+  pos_x: []
+  pos_y: []
+ctn_roi_size: 3.0
+ctn_search_size: 11.0
+ctn_search: true
+ctn_table:
+  labels: [Teflon, Delrin, Acrylic, Polystyrene, LDPE, PMP, Air]
+  linearity_unit: Rel. mass density
+  linearity_axis: [2.16, 1.41, 1.18, 1.05, 0.92, 0.83, 0.0]
+  pos_x: [-28.0, -58.0, -28.0, 28.0, 58.0, 28.0, 0.0]
+  pos_y: [50.0, -0.0, -50.0, -50.0, -0.0, 50.0, 58.0]
+  min_HU: []
+  max_HU: []
+ctn_auto_center: false
+ctn_plot: 0
+sli_ramp_distance: 38.0
+sli_ramp_length: 60.0
+sli_background_width: 5.0
+sli_search_width: 5
+sli_average_width: 1
+sli_median_filter: 0
+sli_type: 0
+sli_tan_a: 0.42
+sli_auto_center: false
+sli_ignore_direction: false
+rin_sigma_image: 0.0
+rin_sigma_profile: 0.0
+rin_range_start: 5.0
+rin_range_stop: 65.0
+rin_subtract_trend: false
+nps_roi_size: 50
+nps_roi_distance: 50.0
+nps_n_sub: 20
+nps_smooth_width: 0.05
+nps_sampling_frequency: 0.01
+nps_normalize: 0
+nps_plot: 0
+---
+label: CT_SIEM_KONSTANS
+output:
+  include_header: false
+  transpose_table: true
+  decimal_mark: ','
+  decimal_all: false
+  include_filename: false
+  group_by: [SeriesInstanceUID]
+  tests:
+    Hom:
+    - label: MIN_DIFF_FROM_CENTER_HU
+      alternative: 0
+      columns: [5, 6, 7, 8]
+      calculation: min
+      per_group: true
+    - label: MAX_DIFF_FROM_CENTER_HU
+      alternative: 0
+      columns: [5, 6, 7, 8]
+      calculation: max
+      per_group: true
+    Noi:
+    - label: MAX_NOISE
+      alternative: 0
+      columns: [1]
+      calculation: max
+      per_group: true
+    Sli:
+    - label: AVG_SLICETHICK
+      alternative: 0
+      columns: [5]
+      calculation: '='
+      per_group: false
+    MTF:
+    - label: X_MTF50
+      alternative: 0
+      columns: [0]
+      calculation: mean
+      per_group: false
+    CTn:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+    HUw:
+    - label: MIN_HU
+      alternative: 0
+      columns: [0]
+      calculation: min
+      per_group: true
+    - label: MAX_HU
+      alternative: 0
+      columns: [0]
+      calculation: max
+      per_group: true
+    - label: MAX_NOISE
+      alternative: 0
+      columns: [1]
+      calculation: max
+      per_group: true
+    DCM:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+    ROI:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+    Rin:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+dcm_tagpattern:
+  label: default
+  list_tags: [KVP, mAs, CTDIvol, SoftwareVersions]
+  list_format: ['|:.0f|', '|:.1f|', '|:.2f|', '']
+roi_type: 0
+roi_radius: 5.0
+roi_x: 10.0
+roi_y: 10.0
+roi_a: 0.0
+roi_offset_xy: [0.0, 0.0]
+roi_offset_mm: false
+roi_use_table: 0
+roi_table:
+  labels: []
+  pos_x: []
+  pos_y: []
+roi_table_val: 0
+roi_table_val_sup: 1
+num_roi_size_x: 100
+num_roi_size_y: 50
+num_table:
+  labels: ['']
+  pos_x:
+  - [10, 20]
+  pos_y:
+  - [10, 20]
+num_digit_label: ''
+hom_roi_size: 10.0
+hom_roi_distance: 55.0
+hom_roi_rotation: 0.0
+noi_roi_size: 55.0
+huw_roi_size: 55.0
+mtf_type: 0
+mtf_roi_size: 3.0
+mtf_background_width: 1.0
+mtf_plot: 2
+mtf_gaussian: true
+mtf_cy_pr_mm: false
+mtf_cut_lsf: true
+mtf_cut_lsf_w: 3.0
+mtf_cut_lsf_w_fade: 1.0
+mtf_offset_xy: [0.0, 0.0]
+mtf_offset_mm: false
+mtf_auto_center: true
+mtf_sampling_frequency: 0.01
+ttf_roi_size: 11.0
+ttf_gaussian: true
+ttf_cut_lsf: true
+ttf_cut_lsf_w: 3.0
+ttf_cut_lsf_w_fade: 1.0
+ttf_sampling_frequency: 0.01
+ttf_table:
+  labels: []
+  pos_x: []
+  pos_y: []
+ctn_roi_size: 3.0
+ctn_search_size: 11.0
+ctn_search: true
+ctn_table:
+  labels: [Teflon, Delrin, Acrylic, Water, Polystyrene, LDPE, PMP, Air]
+  linearity_unit: Rel. mass density
+  linearity_axis: [2.16, 1.41, 1.18, 1.0, 1.05, 0.92, 0.83, 0.0]
+  pos_x: [-28.0, -58.0, -28.0, 0.0, 28.0, 58.0, 28.0, 0.0]
+  pos_y: [50.0, -0.0, -50.0, -58.0, -50.0, -0.0, 50.0, 58.0]
+  min_HU: [0, 0, 0, 0, 0, 0, 0, 0]
+  max_HU: [0, 0, 0, 0, 0, 0, 0, 0]
+ctn_auto_center: false
+ctn_plot: 0
+sli_ramp_distance: 38.0
+sli_ramp_length: 60.0
+sli_background_width: 5.0
+sli_search_width: 5
+sli_average_width: 1
+sli_median_filter: 0
+sli_type: 0
+sli_tan_a: 0.42
+sli_auto_center: false
+sli_ignore_direction: false
+rin_sigma_image: 0.0
+rin_sigma_profile: 0.0
+rin_range_start: 5.0
+rin_range_stop: 65.0
+rin_subtract_trend: false
+nps_roi_size: 50
+nps_roi_distance: 50.0
+nps_n_sub: 20
+nps_smooth_width: 0.05
+nps_sampling_frequency: 0.01
+nps_normalize: 0
+nps_plot: 0

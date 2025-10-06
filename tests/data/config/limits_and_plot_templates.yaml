@@ -1,0 +1,78 @@
+CT:
+- label: CT_edge
+  type_vendor: false
+  groups:
+  - [MIN_DIFF_FROM_CENTER_HU_HEAD, MIN_DIFF_FROM_CENTER_HU_BODY, MAX_DIFF_FROM_CENTER_HU_HEAD,
+    MAX_DIFF_FROM_CENTER_HU_BODY]
+  - [MTF50_H70]
+  - [MIN_HU_HEAD, MIN_HU_BODY, MAX_HU_HEAD, MAX_HU_BODY]
+  - [MAX_NOISE_HEAD, MAX_NOISE_BODY]
+  groups_limits:
+  - [-4.0, 4.0]
+  - [10.0, 12.5]
+  - [-4.0, 4.0]
+  - [null, null]
+  groups_ranges:
+  - [-6.0, 6.0]
+  - [9.0, 13.0]
+  - [-6.0, 6.0]
+  - [null, null]
+  groups_hide: [false, false, false, false]
+  groups_title: [Homogeneity difference from center (HU), MTF50% sharp, HU in water
+      (min/max), Noise (max)]
+Xray:
+- label: ''
+  type_vendor: false
+  groups: []
+  groups_limits: []
+  groups_ranges: []
+  groups_hide: []
+  groups_title: []
+Mammo:
+- label: ''
+  type_vendor: false
+  groups: []
+  groups_limits: []
+  groups_ranges: []
+  groups_hide: []
+  groups_title: []
+NM:
+- label: ''
+  type_vendor: false
+  groups: []
+  groups_limits: []
+  groups_ranges: []
+  groups_hide: []
+  groups_title: []
+SPECT:
+- label: ''
+  type_vendor: false
+  groups: []
+  groups_limits: []
+  groups_ranges: []
+  groups_hide: []
+  groups_title: []
+PET:
+- label: ''
+  type_vendor: false
+  groups: []
+  groups_limits: []
+  groups_ranges: []
+  groups_hide: []
+  groups_title: []
+MR:
+- label: ''
+  type_vendor: false
+  groups: []
+  groups_limits: []
+  groups_ranges: []
+  groups_hide: []
+  groups_title: []
+SR:
+- label: ''
+  type_vendor: false
+  groups: []
+  groups_limits: []
+  groups_ranges: []
+  groups_hide: []
+  groups_title: []

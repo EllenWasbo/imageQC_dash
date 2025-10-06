@@ -1,0 +1,15 @@
+import_path: \\SUSRT-FS17.sir.local\W700data\Diagnostikk\Konstanskontroller\NyttFraConquest
+log_mode: w
+display_images: true
+last_import_date: 22.01.2025 11:19
+ignore_since: 7
+auto_delete_criterion_attributenames: [Modality, SeriesDescription, Modality, Modality,
+  SeriesDescription, SeriesDescription, ProtocolName, StationName]
+auto_delete_criterion_values: [SR, Collimator Install, PR, OT, Patient Protocol, CT
+    Raw data, ExamCard, GLEAMER]
+auto_delete_empty_folders: true
+filename_pattern:
+  label: ''
+  list_tags: [Modality, StationName, PatientID, AcquisitionDate, AcquisitionTime,
+    SeriesDescription, ProtocolName, SeriesNumber, InstanceNumber]
+  list_format: ['', '', '', '', '|:06|', '', '', '', '']

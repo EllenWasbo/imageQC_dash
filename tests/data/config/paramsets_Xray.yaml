@@ -1,0 +1,242 @@
+label: CONFIGDEFAULT
+output:
+  include_header: false
+  transpose_table: false
+  decimal_mark: ','
+  decimal_all: false
+  include_filename: false
+  group_by: [SeriesInstanceUID]
+  tests:
+    STP:
+    - label: PIXEL_MEAN
+      alternative: 0
+      columns: [2]
+      calculation: '='
+      per_group: false
+    Hom:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+    Noi:
+    - label: NOISE_MEAN
+      alternative: 0
+      columns: [0]
+      calculation: '='
+      per_group: false
+    - label: NOISE_STDEV
+      alternative: 0
+      columns: [1]
+      calculation: '='
+      per_group: false
+    DCM:
+    - label: EI
+      alternative: 0
+      columns: [2]
+      calculation: '='
+      per_group: false
+    - label: DETECTOR_ID
+      alternative: 0
+      columns: [5]
+      calculation: '='
+      per_group: false
+    MTF:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+    ROI:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+dcm_tagpattern:
+  label: default
+  list_tags: [KVP, mAs, ExposureIndex, DAP, SID, DetectorID]
+  list_format: ['|:.1f|', '|:.2f|', '|:.1f|', '|:.3f|', '|:.1f|', '']
+roi_type: 0
+roi_radius: 5.0
+roi_x: 10.0
+roi_y: 10.0
+roi_a: 0.0
+roi_offset_xy: [0.0, 0.0]
+roi_offset_mm: false
+roi_use_table: 1
+roi_table:
+  labels: []
+  pos_x: []
+  pos_y: []
+roi_table_val: 0
+roi_table_val_sup: 1
+num_roi_size_x: 100
+num_roi_size_y: 50
+num_table:
+  labels: ['']
+  pos_x:
+  - [10, 20]
+  pos_y:
+  - [10, 20]
+num_digit_label: ''
+hom_roi_size: 10.0
+hom_roi_distance: 0.0
+hom_roi_rotation: 0.0
+hom_tab_alt: 0
+hom_variance: false
+hom_roi_size_variance: 2.0
+hom_mask_max: false
+hom_mask_outer_mm: 0.0
+hom_ignore_roi_percent: 0
+hom_deviating_pixels: 20.0
+hom_deviating_rois: 15.0
+hom_anomalous_factor: 3.0
+noi_percent: 90.0
+mtf_roi_size_x: 20.0
+mtf_roi_size_y: 50.0
+mtf_plot: 3
+mtf_gaussian: false
+mtf_cut_lsf: true
+mtf_cut_lsf_w: 3.0
+mtf_offset_xy: [0.0, 0.0]
+mtf_offset_mm: false
+mtf_auto_center: true
+mtf_auto_center_type: 1
+mtf_auto_center_mask_outer: 30
+mtf_sampling_frequency: 0.01
+nps_roi_size: 256
+nps_n_sub: 5
+nps_smooth_width: 0.05
+nps_sampling_frequency: 0.01
+nps_normalize: 0
+nps_plot: 0
+stp_roi_size: 11.3
+var_roi_size: 2.0
+var_roi_size2: 10.0
+var_mask_outer_mm: 10.0
+foc_pattern_size: 45.0
+foc_angle: 1.5
+foc_search_margin: 10.0
+foc_search_angle: 15.0
+def_mask_outer_mm: 10.0
+def_fraction: 0.1
+---
+label: X_KONSTANS
+output:
+  include_header: false
+  transpose_table: true
+  decimal_mark: ','
+  decimal_all: false
+  include_filename: false
+  group_by: [SeriesInstanceUID]
+  tests:
+    STP:
+    - label: PIXEL_MEAN
+      alternative: 0
+      columns: [2]
+      calculation: '='
+      per_group: false
+    Hom:
+    - label: PIXEL_AVG
+      alternative: 2
+      columns: [0]
+      calculation: mean
+      per_group: false
+    - label: MAX_DIFF
+      alternative: 2
+      columns: [5, 6, 7, 8, 9]
+      calculation: max
+      per_group: false
+    Noi:
+    - label: NOISE
+      alternative: 0
+      columns: [1]
+      calculation: '='
+      per_group: false
+    DCM:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+    MTF:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+    ROI:
+    - label: ''
+      alternative: 0
+      columns: []
+      calculation: '='
+      per_group: false
+dcm_tagpattern:
+  label: default
+  list_tags: [KVP, mAs, ExposureIndex, DAP, SID, DetectorID]
+  list_format: ['|:.1f|', '|:.2f|', '|:.1f|', '|:.3f|', '|:.1f|', '']
+roi_type: 0
+roi_radius: 5.0
+roi_x: 10.0
+roi_y: 10.0
+roi_a: 0.0
+roi_offset_xy: [0.0, 0.0]
+roi_offset_mm: false
+roi_use_table: 0
+roi_table:
+  labels: []
+  pos_x: []
+  pos_y: []
+roi_table_val: 0
+roi_table_val_sup: 1
+num_roi_size_x: 100
+num_roi_size_y: 50
+num_table:
+  labels: ['']
+  pos_x:
+  - [10, 20]
+  pos_y:
+  - [10, 20]
+num_digit_label: ''
+hom_roi_size: 10.0
+hom_roi_distance: 0.0
+hom_roi_rotation: 0.0
+hom_tab_alt: 2
+hom_variance: false
+hom_roi_size_variance: 2.0
+hom_mask_max: false
+hom_mask_outer_mm: 0.0
+hom_ignore_roi_percent: 0
+hom_deviating_pixels: 20.0
+hom_deviating_rois: 15.0
+hom_anomalous_factor: 3.0
+noi_percent: 90
+mtf_roi_size_x: 20.0
+mtf_roi_size_y: 50.0
+mtf_plot: 3
+mtf_gaussian: false
+mtf_cut_lsf: true
+mtf_cut_lsf_w: 3.0
+mtf_offset_xy: [0.0, 0.0]
+mtf_offset_mm: false
+mtf_auto_center: false
+mtf_auto_center_type: 0
+mtf_auto_center_mask_outer: 30
+mtf_sampling_frequency: 0.01
+nps_roi_size: 256
+nps_n_sub: 5
+nps_smooth_width: 0.05
+nps_sampling_frequency: 0.01
+nps_normalize: 0
+nps_plot: 0
+stp_roi_size: 11.3
+var_roi_size: 2.0
+var_roi_size2: 10.0
+var_mask_outer_mm: 10.0
+foc_pattern_size: 45.0
+foc_angle: 1.5
+foc_search_margin: 10.0
+foc_search_angle: 15.0
+def_mask_outer_mm: 10.0
+def_fraction: 0.1
