@@ -1,10 +1,9 @@
 CT:
 - label: CT11
-  path_input: \\SUSRT-FS17.sir.local\W700data\Diagnostikk\Konstanskontroller\CT\CT
-    11\
+  path_input: ''
   path_output: C:\Users\ellen\Documents\GitHub\imageQC_dash\tests\data\results\CT\lab11_Res_ImageQC.txt
-  path_warnings: C:\Users\ewas\OneDrive - Helse Vest\imageQC\Warnings\CT_warnings.txt
-  station_name: CTAWP83211
+  path_warnings: ''
+  station_name: ''
   dicom_crit_attributenames: []
   dicom_crit_values: []
   sort_pattern:
@@ -12,7 +11,7 @@ CT:
     list_tags: [SeriesNumber, InstanceNumber]
     list_sort: [true, true]
   paramset_label: CT_SIEM_KONSTANS
-  quicktemp_label: CT_SIEM64
+  quicktemp_label: '-'
   limits_and_plot_label: CT_edge
   archive: true
   delete_if_not_image: true
@@ -20,10 +19,10 @@ CT:
   active: true
   import_only: false
 - label: CT12
-  path_input: \\SUSRT-FS17.sir.local\W700data\Diagnostikk\Konstanskontroller\CT\CT12\
+  path_input: ''
   path_output: C:\Users\ellen\Documents\GitHub\imageQC_dash\tests\data\results\CT\lab12_Res_ImageQC.txt
-  path_warnings: C:\Users\ewas\OneDrive - Helse Vest\imageQC\Warnings\CT_warnings.txt
-  station_name: CTAWP83694
+  path_warnings: ''
+  station_name: ''
   dicom_crit_attributenames: []
   dicom_crit_values: []
   sort_pattern:
@@ -31,7 +30,7 @@ CT:
     list_tags: [SeriesNumber, InstanceNumber]
     list_sort: [true, true]
   paramset_label: CT_SIEM_KONSTANS
-  quicktemp_label: CT_SIEM64
+  quicktemp_label: '-'
   limits_and_plot_label: CT_edge
   archive: true
   delete_if_not_image: true
@@ -39,11 +38,11 @@ CT:
   active: true
   import_only: false
 Xray:
-- label: LAB_1_HILL
-  path_input: \\SUSRT-FS17.sir.local\W700data\Diagnostikk\Konstanskontroller\RTG\Lab1HIL\
-  path_output: C:\Users\ellen\Documents\GitHub\imageQC_dash\tests\data\results\RTG\lab1Hill_Res_ImageQC.txt
+- label: LAB_1
+  path_input: ''
+  path_output: C:\Users\ellen\Documents\GitHub\imageQC_dash\tests\data\results\RTG\lab1_Res_ImageQC.txt
   path_warnings: ''
-  station_name: HSTHILRADL1DX
+  station_name: ''
   dicom_crit_attributenames: []
   dicom_crit_values: []
   sort_pattern:
@@ -51,7 +50,7 @@ Xray:
     list_tags: [SID, ExposureControlMode, ExposureControlModeDescription, FilterType]
     list_sort: [false, true, true, false]
   paramset_label: X_KONSTANS
-  quicktemp_label: RTG_HILL2
+  quicktemp_label: '-'
   limits_and_plot_label: ''
   archive: true
   delete_if_not_image: true
@@ -59,10 +58,10 @@ Xray:
   active: true
   import_only: false
 - label: LAB_7
-  path_input: \\susrt-fs17.sir.local\W700data\Diagnostikk\Konstanskontroller\RTG\Lab7
+  path_input: ''
   path_output: C:\Users\ellen\Documents\GitHub\imageQC_dash\tests\data\results\RTG\lab7_Res_ImageQC.txt
   path_warnings: ''
-  station_name: HSTVLDRADL7DX
+  station_name: ''
   dicom_crit_attributenames: []
   dicom_crit_values: []
   sort_pattern:
@@ -70,7 +69,7 @@ Xray:
     list_tags: [SID]
     list_sort: [false]
   paramset_label: X_KONSTANS
-  quicktemp_label: RTG_HILL2
+  quicktemp_label: '-'
   limits_and_plot_label: ''
   archive: true
   delete_if_not_image: false

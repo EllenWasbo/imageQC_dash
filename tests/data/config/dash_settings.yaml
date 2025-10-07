@@ -1,0 +1,11 @@
+label: ''
+host: 127.0.0.1
+port: 8050
+url_logo: https://www.helse-stavanger.no/495dd7/globalassets/system/logo-helse-stavanger.svg
+header: Constancy controls
+overview_table_headers: [Apparat, Siste, Antall dager siden, Status]
+days_since_limit: 30
+plot_height: 125
+colors: ['#000000', '#0055ff', '#a914a6', '#7f9955', '#efb412', '#97d2d1', '#b3303b']
+override_css: false
+server: waitress

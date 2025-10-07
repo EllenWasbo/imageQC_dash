@@ -30,6 +30,14 @@ from imageQC_dash.scripts import config_func_dash as cffd
 
 
 @dataclass
+class DataManager:
+    """Class holding dash_settings and modality_dict."""
+
+    dash_settings: dict = field(default_factory=dict)
+    modality_dict: dict = field(default_factory=dict)
+
+
+@dataclass
 class Template:
     """Class holding template settings and values."""
 
@@ -102,7 +110,6 @@ def get_data(config_path, client):
         items = list of Templates defined above
         ignored modalities and templates with no results
     """
-    print('Reading templates...')
     modality_dict = {}
     auto_templates = cffd.load_settings(
         'auto_templates', config_path, client)
@@ -220,52 +227,55 @@ def get_data(config_path, client):
 
 def run_dash_app(use_minio):
     """Update content in dashboard to display automation results."""
-    print('----run_dash_app')
-    modality_dict = {}
-    dash_settings = {}
+    dm = DataManager()
     logger = logging.getLogger('imageQC')
     logger.setLevel(logging.ERROR)
+    assets_folder = str(Path(__file__).parent / 'assets')
     app = dash.Dash(
         __name__, suppress_callback_exceptions=True,
-        external_stylesheets=[dbc.themes.YETI])
-    
-    if use_minio:
-        '''
-        if dash_settings['server']:
-            prefix = os.environ['SHINYPROXY_PUBLIC_PATH']
-        '''
-        from minio import Minio
-        client = Minio(os.getenv('IMAGEQC_S3_URL'),
-            access_key=os.getenv('IMAGEQC_ACCESS_KEY'),
-            secret_key=os.getenv('IMAGEQC_SECRET_KEY'),
-            secure=False)
-        bucket_name = ''  # TODO
-        modality_dict = get_data('', client=client, bucket_name=bucket_name)
-        dash_settings = cffd.load_settings(
-            'dash_settings', '', client=client, bucket_name=bucket_name)
-    else:
-        # run from imageQC (config path set as env-variable)
-        config_path = os.environ['IMAGEQC_CONFIG_FOLDER']
-        modality_dict = get_data(config_path, None)
-        dash_settings = cffd.load_settings(
-            'dash_settings', config_path, None)
+        external_stylesheets=[dbc.themes.YETI, assets_folder + '//custom.css'],
+        assets_folder=assets_folder)
+
+    def read_data():
+        if use_minio:
+            '''
+            if dash_settings['server']:
+                prefix = os.environ['SHINYPROXY_PUBLIC_PATH']
+            '''
+            from minio import Minio
+            client = Minio(os.getenv('IMAGEQC_S3_URL'),
+                access_key=os.getenv('IMAGEQC_ACCESS_KEY'),
+                secret_key=os.getenv('IMAGEQC_SECRET_KEY'),
+                secure=False)
+            bucket_name = ''  # TODO
+            dm.modality_dict = get_data(
+                '', client=client, bucket_name=bucket_name)
+            dm.dash_settings = cffd.load_settings(
+                'dash_settings', '', client=client, bucket_name=bucket_name)
+        else:
+            # run from imageQC (config path set as env-variable)
+            config_path = os.environ['IMAGEQC_CONFIG_FOLDER']
+            dm.modality_dict = get_data(config_path, None)
+            dm.dash_settings = cffd.load_settings(
+                'dash_settings', config_path, None)
+            print(f'read_data Dash {dm.dash_settings}')
+        #return (modality_dict, dash_settings)
 
     def layout():
         """Build the overall layout structure."""
-        print('----layout')
+        print('layout')
+        read_data()
         return dbc.Container([
             dcc.Store(id='results'),
             dbc.Row([
-                dbc.Col(html.H1(dash_settings['header'])),
-                dbc.Col(html.Img(src=dash_settings['url_logo'])),
+                dbc.Col(html.H1(dm.dash_settings['header'])),
+                dbc.Col(html.Img(src=dm.dash_settings['url_logo'])),
                 ]),
             dbc.Row(html.Div([
                 dbc.Tabs([
                     dbc.Tab(tab_overview(), label='Overview', tab_id='overview'),
                     dbc.Tab(tab_results(),
                             label='Results pr template', tab_id='results'),
-                    dbc.Tab(tab_admin(),
-                            label='Admin', tab_id='admin'),
                     ],
                     id='tabs',
                     active_tab='overview',
@@ -273,24 +283,15 @@ def run_dash_app(use_minio):
                 ])),
             ])
 
-    def tab_admin():
-        content = html.Div([
-            dbc.Row([
-                html.Button('Close', id='close-app', n_clicks=0),
-                ])
-            ])
-        return content
-
     def table_overview():
-        print('----table_overview')
-        mods = [[mod] * len(modality_dict[mod])
-                for mod in modality_dict.keys()]
-        labels = [[temp.label for temp in modality_dict[mod]]
-                for mod in modality_dict.keys()]
-        dates = [[temp.newest_date for temp in modality_dict[mod]]
-                 for mod in modality_dict.keys()]
-        days = [[temp.days_since for temp in modality_dict[mod]]
-                for mod in modality_dict.keys()]
+        mods = [[mod] * len(dm.modality_dict[mod])
+                for mod in dm.modality_dict.keys()]
+        labels = [[temp.label for temp in dm.modality_dict[mod]]
+                for mod in dm.modality_dict.keys()]
+        dates = [[temp.newest_date for temp in dm.modality_dict[mod]]
+                 for mod in dm.modality_dict.keys()]
+        days = [[temp.days_since for temp in dm.modality_dict[mod]]
+                for mod in dm.modality_dict.keys()]
         table_data = {
             'modality': [j for i in mods for j in i],
             'template_label': [j for i in labels for j in i],
@@ -303,26 +304,26 @@ def run_dash_app(use_minio):
         columnDefs = [
             {
                 'field': 'modality',
-                'headerName': dash_settings['table_headers'][0],
+                'headerName': dm.dash_settings['table_headers'][0],
                 'cellDataType': 'text',
                 'filter': True,
                 'width': 100,
                 },
             {
                 'field': 'template_label',
-                'headerName': dash_settings['table_headers'][1],
+                'headerName': dm.dash_settings['table_headers'][1],
                 'cellDataType': 'text',
                 'filter': True,
                 },
             {
                 'field': 'last_date',
-                'headerName': dash_settings['table_headers'][2],
+                'headerName': dm.dash_settings['table_headers'][2],
                 'cellDataType': 'dateString',
                 'width': 100,
                 },
             {
                 'field': 'days_since',
-                'headerName': dash_settings['table_headers'][3],
+                'headerName': dm.dash_settings['table_headers'][3],
                 'cellDataType': 'number',
                 'filter': True,
                 'width': 100,
@@ -330,11 +331,10 @@ def run_dash_app(use_minio):
                     'styleConditions': [
                         {
                             'condition':
-                                f'params.value >= {dash_settings["days_since_limit"]}',
+                                f'params.value >= {dm.dash_settings["days_since_limit"]}',
                             'style': {'backgroundColor': 'pink'},
                         }],
                     }
-
                 },
             ]
 
@@ -342,13 +342,13 @@ def run_dash_app(use_minio):
             id='overview_modality_table',
             rowData=data,
             columnDefs=columnDefs,
+            style={'height': '700px'},
             dashGridOptions={'pagination':True}
         )
 
         return html.Div([grid])
 
     def tab_overview():
-        print('----tab_overview')
         return html.Div([
             dbc.Row([
                 dbc.Col(table_overview()),
@@ -360,7 +360,6 @@ def run_dash_app(use_minio):
             )
 
     def tab_results():
-        print('----tab_results')
         return html.Div([
             dbc.Row([
                 dbc.Col([
@@ -369,7 +368,7 @@ def run_dash_app(use_minio):
                         dbc.RadioItems(
                             options=[
                                 {'label': mod, 'value': i}
-                                for i, mod in enumerate([*modality_dict])],
+                                for i, mod in enumerate([*dm.modality_dict])],
                             value=0,
                             id='modality_select'),
                     ]),
@@ -391,23 +390,25 @@ def run_dash_app(use_minio):
             ], style={'marginBottom': 50, 'marginTop': 25})
 
     def update_template_options(modality_value=0):
-        print('----update_template_options')
         try:
-            mod = [*modality_dict][modality_value]
-            template_list = modality_dict[mod]
+            mod = [*dm.modality_dict][modality_value]
+            template_list = dm.modality_dict[mod]
         except (IndexError, KeyError):
             template_list = []
-        print(f'template_list {template_list}')
         return [{'label': temp.label, 'value': i}
                 for i, temp in enumerate(template_list)]
 
     def generate_figure_list(data, lim_plots):
-        print('----generate_figure_list')
         figures = []
-        colorlist = dash_settings['colors']
+        colorlist = dm.dash_settings['colors']
         for group_idx, group in enumerate(lim_plots['groups']):
+
             fig = ''
-            if lim_plots['groups_hide'][group_idx] is False:
+            try:
+                hide = lim_plots['groups_hide'][group_idx]
+            except KeyError:
+                hide = False
+            if hide is False:
                 fig = go.Figure()
                 for lineno, header in enumerate(group):
                     color = colorlist[lineno % len(colorlist)]
@@ -415,81 +416,148 @@ def run_dash_app(use_minio):
                         go.Scatter(
                             x=data[data.columns[0]], y=data[header],
                             line_color=color,
-                            name=header, 
+                            name=header,
                             mode='lines+markers',
-                            showlegend=False, legendgroup=str(group_idx),
+                            showlegend=False,# legendgroup=str(group_idx),
                             ),
                         )
 
-                if any(lim_plots['groups_limits'][group_idx]):
-                    lims = lim_plots['groups_limits'][group_idx]
-                    lim_text = [None, None]
-                    if isinstance(lims[0], str):
-                        if lims[0] == 'text':
-                            lims = [None, None]
-                        elif lims[0] == 'relative_first':
-                            first_val = data[header][0]
-                            tol = first_val * 0.01 * lims[1]
-                            lim_text = [f'first +/- {lims[1]}%', '']
-                            lims = [first_val - tol, first_val + tol]
-                        else:  # 'relative_median'
-                            med_val = np.median(data[header][:-1])
-                            tol = med_val * 0.01 * lims[1]
-                            lim_text = [f'median +/- {lims[1]}%', '']
-                            lims = [med_val - tol, med_val + tol]
-                    else:
-                        lim_text = [f'min {lims[0]}', f'max {lims[1]}']
-                    yanchors = ['bottom', 'top']
-                    for limno, lim in enumerate(lims):
-                        if lim is not None:
-                            label_dict = dict(
-                                text=lim_text[limno], textposition='start',
-                                font=dict(color='red'),
-                                yanchor=yanchors[limno])
-                            fig.add_hline(
-                                y=lim, line_dash='dot', line_color='red',
-                                label=label_dict)
+                if 'groups_limits' in lim_plots:
+                    if any(lim_plots['groups_limits'][group_idx]):
+                        lims = lim_plots['groups_limits'][group_idx]
+                        lim_text = [None, None]
+                        if isinstance(lims[0], str):
+                            if lims[0] == 'text':
+                                lims = [None, None]
+                            elif lims[0] == 'relative_first':
+                                first_val = data[header][0]
+                                tol = first_val * 0.01 * lims[1]
+                                lim_text = [f'first +/- {lims[1]}%', '']
+                                lims = [first_val - tol, first_val + tol]
+                            else:  # 'relative_median'
+                                med_val = np.median(data[header][:-1])
+                                tol = med_val * 0.01 * lims[1]
+                                lim_text = [f'median +/- {lims[1]}%', '']
+                                lims = [med_val - tol, med_val + tol]
+                        else:
+                            lim_text = [f'min {lims[0]}', f'max {lims[1]}']
+                        yanchors = ['bottom', 'top']
+                        for limno, lim in enumerate(lims):
+                            if lim is not None:
+                                label_dict = dict(
+                                    text=lim_text[limno], textposition='start',
+                                    font=dict(color='red'),
+                                    yanchor=yanchors[limno])
+                                fig.add_hline(
+                                    y=lim, line_dash='dot', line_color='red',
+                                    label=label_dict)
 
-                            for header in group:
-                                if limno == 0:  # lower limit
-                                    data_off = data[data[header] < lim]
-                                else:
-                                    data_off = data[data[header] > lim]
-                                if len(data_off) > 0:
-                                    fig.add_trace(
-                                        go.Scatter(
-                                            x=data_off[data_off.columns[0]],
-                                            y=data_off[header],
-                                            name=header,
-                                            mode='markers', 
-                                            marker=dict(
-                                                color='red', size=15),
-                                            showlegend=False,
-                                            ),
-                                        )
-
-                set_range = lim_plots['groups_ranges'][group_idx]
-                if set_range[0] is None and set_range[1] is None:
+                                for header in group:
+                                    if limno == 0:  # lower limit
+                                        data_off = data[data[header] < lim]
+                                    else:
+                                        data_off = data[data[header] > lim]
+                                    if len(data_off) > 0:
+                                        fig.add_trace(
+                                            go.Scatter(
+                                                x=data_off[data_off.columns[0]],
+                                                y=data_off[header],
+                                                name=header,
+                                                mode='markers', 
+                                                marker=dict(
+                                                    color='red', size=15),
+                                                showlegend=False,
+                                                ),
+                                            )
+                if 'groups_ranges' in lim_plots:
+                    set_range = lim_plots['groups_ranges'][group_idx]
+                    if set_range[0] is None and set_range[1] is None:
+                        autorange = True
+                    elif set_range[0] is not None and set_range[1] is not None:
+                        autorange = False
+                    elif set_range[0] is None and set_range[1] is not None:
+                        autorange = "min"
+                    elif set_range[1] is None and set_range[0] is not None:
+                        autorange = "max"
+                else:
                     autorange = True
-                elif set_range[0] is not None and set_range[1] is not None:
-                    autorange = False
-                elif set_range[0] is None and set_range[1] is not None:
-                    autorange = "min"
-                elif set_range[1] is None and set_range[0] is not None:
-                    autorange = "max"
+                    set_range=[None, None]
                 fig.update_yaxes(
                     range=set_range, autorange=autorange)
+
             figures.append(fig)
         return figures
 
-    @app.callback(
-        Output('tab_admin', 'children'),
-        Input('close-app', 'n_clicks'),
-        prevent_intitial_call=True
-        )
-    def on_close_click(n):
-        if n is not None:
-            app.server.shutdown()
+    def update_template(modality_value, template_value):
+        proceed = True
+        try:
+            mod = [*dm.modality_dict][modality_value]
+        except IndexError:
+            proceed = False
+        if proceed:
+            data = dm.modality_dict[mod][template_value].data
+            lim_plots = dm.modality_dict[mod][template_value].limits_and_plot_template
+            try:
+                titles = [title for i, title in enumerate(lim_plots['groups_title'])
+                          if lim_plots['groups_hide'][i] is False]
+            except KeyError:
+                titles = lim_plots['groups']
+            n_rows = len(titles)
+
+            table_data = {'title': titles}
+            df = pd.DataFrame(table_data)
+            df['graph'] = ''
+            figures = generate_figure_list(data, lim_plots)
+
+            fig_height = dm.dash_settings['plot_height'] * n_rows
+
+            for i, r in df.iterrows():
+                fig = figures[i]
+                fig.update_layout(
+                    margin=dict(t=0, b=0, l=0, r=0),
+                    plot_bgcolor='#eee',
+                    height=fig_height)
+                vis = True if i == 0 else False
+                fig.update_xaxes(showgrid=False, visible=vis)
+                fig.update_yaxes(showgrid=False, visible=False)
+                if vis:
+                    fig.update_layout(xaxis={'side': 'top'})
+                df.at[i, 'graph'] = fig
+
+            columnDefs = [
+                {
+                    'field': 'title',
+                    'headerName': 'Plot title',
+                    'cellDataType': 'text',
+                    'width': 200,
+                },
+                {
+                    'field': 'graph',
+                    'cellRenderer': 'DCC_GraphClickData',
+                    'headerName': 'Plot',
+                    'maxWidth': '100vh',
+                    'minWidth': 300,
+                }
+                ]
+
+            grid = dag.AgGrid(
+                id='graph_table',
+                rowData=df.to_dict("records"),
+                columnDefs=columnDefs,
+                style={'height': '700px'},
+                dashGridOptions={
+                    'rowHeight': dm.dash_settings['plot_height'],
+                    'animateRows': False},
+            )
+
+            template_content = dcc.Loading(
+                id='loading-1',
+                children=[html.Div([grid])],
+                type='circle')
+
+        else:
+            template_content = html.Div([])
+        return template_content
 
     @app.callback(
         Output('tabs', 'active_tab'),
@@ -497,10 +565,9 @@ def run_dash_app(use_minio):
         [Input({'type': 'overview_modality_button', 'index': ALL}, 'n_clicks')],
     )
     def go_to_modality(n_clicks):
-        print('----go_to_modality')
         mod_value = 0
         if ctx.triggered_id:
-            mod_value = [*modality_dict].index(ctx.triggered_id.index)
+            mod_value = [*dm.modality_dict].index(ctx.triggered_id.index)
 
         return 'results', mod_value
 
@@ -512,7 +579,6 @@ def run_dash_app(use_minio):
         ],
     )
     def on_modality_select(modality_value):
-        print('----on_modality_select')
         return update_template_options(modality_value=modality_value), 0
 
     @app.callback(
@@ -523,17 +589,19 @@ def run_dash_app(use_minio):
         ],
     )
     def on_template_select(modality_value, template_value):
-        print('----on_template_select')
         proceed = True
         try:
-            mod = [*modality_dict][modality_value]
+            mod = [*dm.modality_dict][modality_value]
         except IndexError:
             proceed = False
         if proceed:
-            data = modality_dict[mod][template_value].data
-            lim_plots = modality_dict[mod][template_value].limits_and_plot_template
-            titles = [title for i, title in enumerate(lim_plots['groups_title'])
-                      if lim_plots['groups_hide'][i] is False]
+            data = dm.modality_dict[mod][template_value].data
+            lim_plots = dm.modality_dict[mod][template_value].limits_and_plot_template
+            try:
+                titles = [title for i, title in enumerate(lim_plots['groups_title'])
+                          if lim_plots['groups_hide'][i] is False]
+            except KeyError:
+                titles = lim_plots['groups']
             n_rows = len(titles)
 
             table_data = {'title': titles}
@@ -541,7 +609,7 @@ def run_dash_app(use_minio):
             df['graph'] = ''
             figures = generate_figure_list(data, lim_plots)
 
-            fig_height = dash_settings['plot_height'] * n_rows
+            fig_height = dm.dash_settings['plot_height'] * n_rows
 
             for i, r in df.iterrows():
                 fig = figures[i]
@@ -549,17 +617,23 @@ def run_dash_app(use_minio):
                     margin=dict(t=0, b=0, l=0, r=0),
                     plot_bgcolor='#eee',
                     height=fig_height)
-                fig.update_xaxes(showgrid=False)
+                vis = True if i == 0 else False
+                fig.update_xaxes(showgrid=False, visible=vis)
                 fig.update_yaxes(showgrid=False, visible=False)
                 df.at[i, 'graph'] = fig
 
             columnDefs = [
-                {'field': 'title', 'headerName': 'Plot title'},
+                {
+                    'field': 'title',
+                    'headerName': 'Plot title',
+                    'cellDataType': 'text',
+                    'width': 200,
+                },
                 {
                     'field': 'graph',
                     'cellRenderer': 'DCC_GraphClickData',
                     'headerName': 'Plot',
-                    'maxWidth': 500,
+                    'maxWidth': '100vh',
                     'minWidth': 300,
                 }
                 ]
@@ -568,14 +642,17 @@ def run_dash_app(use_minio):
                 id='graph_table',
                 rowData=df.to_dict("records"),
                 columnDefs=columnDefs,
-                style={"height": "100%"},
-                dashGridOptions={"rowHeight": 100, "animateRows": False},
+                style={'height': '700px'},
+                dashGridOptions={
+                    'rowHeight': dm.dash_settings['plot_height'],
+                    'animateRows': False},
             )
 
             template_content = dcc.Loading(
                 id='loading-1',
                 children=[html.Div([grid])],
                 type='circle')
+
         else:
             template_content = html.Div([])
         return template_content
@@ -593,28 +670,23 @@ def run_dash_app(use_minio):
         Input("loadig-1", "value")
     )
     def input_triggers_spinner(value):
+        print('input_triggers_spinner')
         time.sleep(1)
         return value
 
-    print('----before app.layout')
+    logger.setLevel(logging.INFO)
+    read_data()
     app.layout = layout
-    print('----after app.layout')
-    if dash_settings['server'] == 'waitress':
-        print('----waitress')
-        url = f'http://{dash_settings["host"]}:{dash_settings["port"]}'
+    print(f'dm.dash_settings {dm.dash_settings}')
+    if dm.dash_settings['server'] == 'waitress':
+        url = f'http://{dm.dash_settings["host"]}:{dm.dash_settings["port"]}'
         webbrowser.open_new(url=url)
         from waitress import serve
-        print('----serve')
         serve(app.server,
-              host=dash_settings['host'], port=dash_settings['port'])
+              host=dm.dash_settings['host'], port=dm.dash_settings['port'])
     else:
-        app.run(debug=True, host=dash_settings['host'])
+        app.run(debug=True, host=dm.dash_settings['host'])
     breakpoint()
-    
-
-    logger = logging.getLogger('imageQC')
-    logger.setLevel(logging.INFO)
-
 
 
 if __name__ == '__main__':
@@ -626,27 +698,26 @@ if __name__ == '__main__':
         # if imageQC is running, use defined config path from environ
         config_path = os.environ[env_config_folder]
     except KeyError:
-        # if imageQC user pref file exist
-        config_folder = cffd.find_user_prefs_config_folder()
-        if config_folder:
-            os.environ[env_config_folder] = config_folder
-        else:
-            # find values from .env
-            env_path = Path(__file__).parent.parent.parent / '.env'
-            if Path.exists(env_path):
-                from dotenv import load_dotenv
-                load_dotenv(env_path)
+        # look for .env file
+        env_path = Path(__file__).parent.parent.parent / '.env'
+        if Path.exists(env_path):
+            from dotenv import load_dotenv
+            load_dotenv(env_path)
 
-                if env_config_folder in os.environ:
-                    print('----iQC')
+            if env_config_folder in os.environ:
+                print('----iQC')
+            else:
+                if 'IMAGEQC_BUCKET_NAME' in os.environ:
+                    print('----minio')
+                    minio = True
                 else:
-                    if 'IMAGEQC_BUCKET_NAME' in os.environ:
-                        print('----minio')
-                        minio = True
-                    else:
-                        print('missing expected keys in .env. See Wiki.')
-                        proceed = False
-
+                    print('missing expected keys in .env. See Wiki.')
+                    proceed = False
+        else:
+            # if imageQC user pref file exist
+            config_folder = cffd.find_user_prefs_config_folder()
+            if config_folder:
+                os.environ[env_config_folder] = config_folder
             else:
                 print('missing .env-file. See Wiki.')
                 proceed = False
