@@ -231,6 +231,7 @@ def run_dash_app(use_minio):
     logger = logging.getLogger('imageQC')
     logger.setLevel(logging.ERROR)
     assets_folder = str(Path(__file__).parent / 'assets')
+    # assets_folder = str(Path(os.getcwd()) / 'assets')  # when exe
     app = dash.Dash(
         __name__, suppress_callback_exceptions=True,
         external_stylesheets=[dbc.themes.YETI, assets_folder + '//custom.css'],
