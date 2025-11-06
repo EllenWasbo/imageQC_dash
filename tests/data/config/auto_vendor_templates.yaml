@@ -1,0 +1,34 @@
+CT:
+- {label: '', path_input: '', path_output: '', path_warnings: '', station_name: '',
+  limits_and_plot_label: '', archive: false, file_type: '', file_prefix: '', file_suffix: '',
+  active: true}
+Xray:
+- {label: '', path_input: '', path_output: '', path_warnings: '', station_name: '',
+  limits_and_plot_label: '', archive: false, file_type: '', file_prefix: '', file_suffix: '',
+  active: true}
+Mammo:
+- {label: '', path_input: '', path_output: '', path_warnings: '', station_name: '',
+  limits_and_plot_label: '', archive: false, file_type: '', file_prefix: '', file_suffix: '',
+  active: true}
+NM:
+- {label: '', path_input: '', path_output: '', path_warnings: '', station_name: '',
+  limits_and_plot_label: '', archive: false, file_type: '', file_prefix: '', file_suffix: '',
+  active: true}
+SPECT:
+- {label: '', path_input: '', path_output: '', path_warnings: '', station_name: '',
+  limits_and_plot_label: '', archive: false, file_type: '', file_prefix: '', file_suffix: '',
+  active: true}
+PET:
+- {label: QGuard, path_input: '',
+  path_output: 'C:\Users\ellen\Documents\GitHub\imageQC_dash\tests\data\results\PET\testPET_QG.txt',
+  path_warnings: '', station_name: CTPET21, limits_and_plot_label: '', archive: false,
+  file_type: Siemens PET QualityGuard Report (.pdf), file_prefix: '', file_suffix: .pdf,
+  active: true}
+MR:
+- {label: '', path_input: '', path_output: '', path_warnings: '', station_name: '',
+  limits_and_plot_label: '', archive: false, file_type: '', file_prefix: '', file_suffix: '',
+  active: true}
+SR:
+- {label: '', path_input: '', path_output: '', path_warnings: '', station_name: '',
+  limits_and_plot_label: '', archive: false, file_type: '', file_prefix: '', file_suffix: '',
+  active: true}

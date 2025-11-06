@@ -133,15 +133,16 @@ def get_data(config_path, client):
                 modality_dict[mod] = []
             try:
                 lim_labels = [lim['label'] for lim in lim_plots[mod]]
-                if auto_no == 0:
-                    param_labels = [
-                        paramset['label'] for paramset in paramsets[mod]]
-                    decimarks = [paramset['decimal_mark']
-                                 for paramset in paramsets[mod]]
-                else:
-                    decimarks = [paramsets[mod][0]['decimal_mark']]
-            except (KeyError, IndexError):
+            except KeyError:
                 pass
+            if auto_no == 0 and mod != 'SR':
+                param_labels = [
+                    paramset['label'] for paramset in paramsets[mod]]
+                decimarks = [paramset['decimal_mark']
+                                for paramset in paramsets[mod]]
+            else:
+                decimarks = [paramsets['CT'][0]['decimal_mark']]
+
             for temp in template_list:
                 if all([
                         temp['label'] != '',

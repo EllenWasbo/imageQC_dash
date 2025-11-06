@@ -43,12 +43,13 @@ Unlike imageQC, imageQC_dash have failed building the packages correctly with py
 - Create an empty folder called e.g. cx_Freeze
 - Create an empty folder withing your cx_Freeze folder called imageQC_dash
 - Copy into the empty imageQC_dash folder src and all files directly from folder above src except .gitignore/.pylintrc
-- Delete all pycache/eggs folders from src and subfolders
+
 In cmd.exe (not from Anaconda)
 - cd to the cx_Freeze folder
 - python -m venv iQCd (creates a new virtual environment in the current folder, if you already have one, make sure it is deactivated and delete the venv folder)
 - iQCd\Scripts\activate.bat
 - pip install cx_freeze
+- cd to the folder above src
 - pip install -e .
 - delete setup.py, pyproject.toml, setup.cfg from cx_Freeze/imageQC_dash
 - in cx_Freeze/imageQC_dash/src/imageQC_dash/imageQC_dash.py (line ~ 234) switch assets_folder definition

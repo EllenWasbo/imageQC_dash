@@ -1,4 +1,4 @@
-# v1.0.0
-_XXX XX, 2025_
+# v1.0.1
+_Nov 06, 2025_
 
-- placeholder for future versions
+- small fixes
