@@ -51,7 +51,6 @@ def find_user_prefs_config_folder():
     if os.path.exists(path):
         with open(path, 'r') as file:
             doc = yaml.safe_load(file)
-            print(f'type {type(doc)} {doc}')
             config_folder = doc['config_folder']
 
     return config_folder

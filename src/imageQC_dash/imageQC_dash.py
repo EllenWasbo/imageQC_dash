@@ -25,7 +25,6 @@ import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
 import plotly.graph_objects as go
 
-#from imageQC_dash.scripts.ui_dash import run_dash_app
 from imageQC_dash.scripts import config_func_dash as cffd
 
 
@@ -116,8 +115,6 @@ def get_data(config_path, client):
     auto_vendor_templates = cffd.load_settings(
         'auto_vendor_templates', config_path, client)
     paramsets = cffd.load_paramset_decimarks(config_path, client)
-    lim_plots = cffd.load_settings(
-        'limits_and_plot_templates', config_path, client)
     if auto_templates or auto_vendor_templates:
         lim_plots = cffd.load_settings(
             'limits_and_plot_templates', config_path, client)
@@ -165,17 +162,20 @@ def get_data(config_path, client):
                         proceed = False
                         dataframe = None
 
-                        try:
-                            idx_paramset = param_labels.index(
-                                temp['paramset_label'])
-                            proceed, dataframe = read_csv(
-                                temp['path_output'], decimarks[idx_paramset],
-                                client=client)
-                        except (KeyError, ValueError):
-                            pass
+                        if temp['path_output']:
+                            if auto_no == 0:
+                                idx_paramset = param_labels.index(
+                                    temp['paramset_label'])
+                                proceed, dataframe = read_csv(
+                                    temp['path_output'], decimarks[idx_paramset],
+                                    client=client)
+                            else:  # vendor files
+                                proceed, dataframe = read_csv(
+                                    temp['path_output'], decimarks[0],
+                                    client=client)
 
                         if proceed:
-                            print(f'Reading results for {mod}/{temp["label"]}',
+                            print(f'Reading results for {mod}/{temp["label"]}                                                       ',
                                   end='\r', flush=True)
                             dataframe.dropna(
                                 how='all', inplace=True)  # ignore empty rows
@@ -259,13 +259,9 @@ def run_dash_app(use_minio):
             dm.modality_dict = get_data(config_path, None)
             dm.dash_settings = cffd.load_settings(
                 'dash_settings', config_path, None)
-            print(f'read_data Dash {dm.dash_settings}')
-        #return (modality_dict, dash_settings)
 
     def layout():
         """Build the overall layout structure."""
-        print('layout')
-        read_data()
         return dbc.Container([
             dcc.Store(id='results'),
             dbc.Row([
@@ -343,7 +339,7 @@ def run_dash_app(use_minio):
             id='overview_modality_table',
             rowData=data,
             columnDefs=columnDefs,
-            style={'height': '700px'},
+            style={'height': '1000px'},
             dashGridOptions={'pagination':True}
         )
 
@@ -518,8 +514,10 @@ def run_dash_app(use_minio):
                     margin=dict(t=0, b=0, l=0, r=0),
                     plot_bgcolor='#eee',
                     height=fig_height)
-                vis = True if i == 0 else False
-                fig.update_xaxes(showgrid=False, visible=vis)
+                vis = True if i in [0, n_rows-1] else False
+                col = 'black' if vis else 'white'
+                fig.update_layout(font_color=col)
+                fig.update_xaxes(showgrid=False)#, font_color=col)#visible=vis)
                 fig.update_yaxes(showgrid=False, visible=False)
                 if vis:
                     fig.update_layout(xaxis={'side': 'top'})
@@ -545,7 +543,7 @@ def run_dash_app(use_minio):
                 id='graph_table',
                 rowData=df.to_dict("records"),
                 columnDefs=columnDefs,
-                style={'height': '700px'},
+                style={'height': '1000px'},
                 dashGridOptions={
                     'rowHeight': dm.dash_settings['plot_height'],
                     'animateRows': False},
@@ -618,8 +616,10 @@ def run_dash_app(use_minio):
                     margin=dict(t=0, b=0, l=0, r=0),
                     plot_bgcolor='#eee',
                     height=fig_height)
-                vis = True if i == 0 else False
-                fig.update_xaxes(showgrid=False, visible=vis)
+                vis = True if i in [0, n_rows-1] else False
+                col = 'black' if vis else 'white'
+                fig.update_layout(font_color=col)
+                fig.update_xaxes(showgrid=False)#, font_color=col)#visible=vis)
                 fig.update_yaxes(showgrid=False, visible=False)
                 df.at[i, 'graph'] = fig
 
@@ -643,7 +643,7 @@ def run_dash_app(use_minio):
                 id='graph_table',
                 rowData=df.to_dict("records"),
                 columnDefs=columnDefs,
-                style={'height': '700px'},
+                style={'height': '1000px'},
                 dashGridOptions={
                     'rowHeight': dm.dash_settings['plot_height'],
                     'animateRows': False},
@@ -668,7 +668,7 @@ def run_dash_app(use_minio):
 
     @app.callback(
         Output("loading-output-1", "children"),
-        Input("loadig-1", "value")
+        Input("loading-1", "value")
     )
     def input_triggers_spinner(value):
         print('input_triggers_spinner')
@@ -678,7 +678,6 @@ def run_dash_app(use_minio):
     logger.setLevel(logging.INFO)
     read_data()
     app.layout = layout
-    print(f'dm.dash_settings {dm.dash_settings}')
     if dm.dash_settings['server'] == 'waitress':
         url = f'http://{dm.dash_settings["host"]}:{dm.dash_settings["port"]}'
         webbrowser.open_new(url=url)
@@ -687,11 +686,12 @@ def run_dash_app(use_minio):
               host=dm.dash_settings['host'], port=dm.dash_settings['port'])
     else:
         app.run(debug=True, host=dm.dash_settings['host'])
-    breakpoint()
 
 
 if __name__ == '__main__':
-
+    print('---Starting imageQC_dash---')
+    print('(Script stops running when terminal is closed. '
+          'Avoid multiple terminals running same script.)')
     proceed = True
     minio = False
     env_config_folder = 'IMAGEQC_CONFIG_FOLDER'
