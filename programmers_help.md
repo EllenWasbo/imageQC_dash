@@ -52,9 +52,6 @@ In cmd.exe (not from Anaconda)
 - cd to the folder above src
 - pip install -e .
 - delete setup.py, pyproject.toml, setup.cfg from cx_Freeze/imageQC_dash
-- in cx_Freeze/imageQC_dash/src/imageQC_dash/imageQC_dash.py (line ~ 234) switch assets_folder definition
-	- &#35; assets_folder = str(Path(__file__).parent / 'assets')
-    - assets_folder = str(Path(os.getcwd()) / 'assets')  # when exe
 - cd imageQC_dash
 - python setup_cx_freeze.py build
 - wait 5 min

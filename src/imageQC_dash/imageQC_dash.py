@@ -8,6 +8,7 @@ Prepared for either local host or for data saved in minio-buckets
 from __future__ import annotations
 from dataclasses import dataclass, field
 import os
+import sys
 import io
 import time
 import json
@@ -231,8 +232,10 @@ def run_dash_app(use_minio):
     dm = DataManager()
     logger = logging.getLogger('imageQC')
     logger.setLevel(logging.ERROR)
-    assets_folder = str(Path(__file__).parent / 'assets')
-    # assets_folder = str(Path(os.getcwd()) / 'assets')  # when exe
+    if getattr(sys, 'frozen', False):  # exe
+        assets_folder = str(Path(os.getcwd()) / 'assets')
+    else:
+        assets_folder = str(Path(__file__).parent / 'assets')
     app = dash.Dash(
         __name__, suppress_callback_exceptions=True,
         external_stylesheets=[dbc.themes.YETI, assets_folder + '//custom.css'],
@@ -690,7 +693,7 @@ def run_dash_app(use_minio):
 
 
 if __name__ == '__main__':
-    print('---Starting imageQC_dash---')
+    print('--- Starting imageQC_dash v1.0.2 ---')
     print('(Script stops running when terminal is closed. '
           'Avoid multiple terminals running same script.)')
     proceed = True
@@ -701,7 +704,10 @@ if __name__ == '__main__':
         config_path = os.environ[env_config_folder]
     except KeyError:
         # look for .env file
-        env_path = Path(__file__).parent.parent.parent / '.env'
+        if getattr(sys, 'frozen', False):  # exe
+            env_path = str(Path(os.getcwd()) / '.env')
+        else:
+            env_path = Path(__file__).parent.parent.parent / '.env'
         if Path.exists(env_path):
             from dotenv import load_dotenv
             load_dotenv(env_path)
