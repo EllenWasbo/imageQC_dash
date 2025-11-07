@@ -705,7 +705,7 @@ if __name__ == '__main__':
     except KeyError:
         # look for .env file
         if getattr(sys, 'frozen', False):  # exe
-            env_path = str(Path(os.getcwd()) / '.env')
+            env_path = Path(os.getcwd()) / '.env'
         else:
             env_path = Path(__file__).parent.parent.parent / '.env'
         if Path.exists(env_path):
