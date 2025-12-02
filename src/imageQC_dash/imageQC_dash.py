@@ -419,7 +419,7 @@ def run_dash_app(use_minio):
                             line_color=color,
                             name=header,
                             mode='lines+markers',
-                            showlegend=False,# legendgroup=str(group_idx),
+                            showlegend=False,
                             ),
                         )
 
@@ -486,7 +486,7 @@ def run_dash_app(use_minio):
                 fig.update_yaxes(
                     range=set_range, autorange=autorange)
 
-            figures.append(fig)
+                figures.append(fig)
         return figures
 
     def update_template(modality_value, template_value):
@@ -693,7 +693,7 @@ def run_dash_app(use_minio):
 
 
 if __name__ == '__main__':
-    print('--- Starting imageQC_dash v1.0.2 ---')
+    print('--- Starting imageQC_dash v1.0.3 ---')
     print('(Script stops running when terminal is closed. '
           'Avoid multiple terminals running same script.)')
     proceed = True
